@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividades Deportivas & Arte</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0 auto;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f172a;
+  color: white;
+  max-width: 480px;
+}
+.header {
+  padding: 24px 20px 16px;
+  text-align: center;
+  background: linear-gradient(180deg, #1e293b, #0f172a);
+  position: sticky; top: 0; z-index: 50;
+}
+.header h2 { margin: 0 0 6px; font-size: 20px; font-weight: 700; }
+.header-meta {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; font-size: 11px; color: #94a3b8;
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
+  animation: blink 1.4s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+.section {
+  padding: 18px 15px 6px; font-size: 11px; font-weight: 600;
+  opacity: 0.55; letter-spacing: 2px; text-transform: uppercase;
+}
+.card { margin: 10px 12px; border-radius: 18px; overflow: hidden; background: #1e293b; }
+.card-top { padding: 18px; font-size: 30px; text-align: center; }
+.purple { background: linear-gradient(90deg,#2e1065,#6d28d9); }
+.orange { background: linear-gradient(90deg,#7c2d12,#ea580c); }
+.red    { background: linear-gradient(90deg,#7f1d1d,#dc2626); }
+.blue   { background: linear-gradient(90deg,#1e3a8a,#3b82f6); }
+.green  { background: linear-gradient(90deg,#064e3b,#10b981); }
+.teal   { background: linear-gradient(90deg,#134e4a,#14b8a6); }
+.card-body { padding: 14px 15px; }
+.title { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+.badge {
+  float: right; font-size: 12px;
+  background: rgba(255,255,255,0.15); padding: 4px 10px;
+  border-radius: 20px; font-weight: 400;
+}
+.names { display: flex; flex-wrap: wrap; gap: 6px; }
+.name { background: #334155; padding: 6px 11px; border-radius: 20px; font-size: 12px; }
+
+.spinner-wrap { text-align: center; padding: 60px 20px; color: #64748b; }
+.spinner {
+  width: 36px; height: 36px; border: 3px solid #1e293b;
+  border-top-color: #3b82f6; border-radius: 50%;
+  animation: spin 0.75s linear infinite; margin: 0 auto 14px;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.spinner-label { font-size: 12px; color: #475569; margin-top: 6px; }
+
+.error-box {
+  margin: 16px 12px; border-radius: 14px; padding: 18px 16px;
+  background: #1e293b; border: 1px solid #ef444440; font-size: 13px; line-height: 1.8;
+}
+.error-box h3 { margin: 0 0 8px; font-size: 14px; color: #f87171; }
+.error-box p { color: #94a3b8; margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2>⚡ Actividades Deportivas & Arte</h2>
+  <div class="header-meta">
+    <div class="live-dot"></div>
+    <span id="statusText">Cargando datos...</span>
+  </div>
+</div>
+
+<div id="content">
+  <div class="spinner-wrap">
+    <div class="spinner"></div>
+    <p>Conectando con Google Sheets...</p>
+    <div class="spinner-label" id="tryLabel"></div>
+  </div>
+</div>
+
+<script>
+// ── URL del Apps Script (fuente de datos) ─────────────────────────────────────
+const API_URL = 'https://script.google.com/macros/s/AKfycbxeWcgk3oix6C2l52LT0mvtDToPDyb2nix_2FwTIDHG8w5tOr15zLAj8GDcsg0lHypw/exec';
+
+// ── Metadatos por actividad ───────────────────────────────────────────────────
+const ACT = {
+  'Piano':             { icon:'🎹', color:'purple', section:'MÚSICA' },
+  'violin':            { icon:'🎻', color:'purple', section:'MÚSICA' },
+  'Violin':            { icon:'🎻', color:'purple', section:'MÚSICA' },
+  'Chelo':             { icon:'🎻', color:'purple', section:'MÚSICA' },
+  'Bateria percusion': { icon:'🥁', color:'purple', section:'MÚSICA' },
+  'Guitarra':          { icon:'🎸', color:'purple', section:'MÚSICA' },
+  'Bajo':              { icon:'🎸', color:'purple', section:'MÚSICA' },
+  'Teatro':            { icon:'🎭', color:'red',    section:'ARTE'    },
+  'Voleibol':          { icon:'🏐', color:'blue',   section:'DEPORTES' },
+  'Basquetbol':        { icon:'🏀', color:'orange', section:'DEPORTES' },
+  'Gimnacia':          { icon:'🤸', color:'green',  section:'DEPORTES' },
+  'Futbol':            { icon:'⚽', color:'blue',   section:'DEPORTES' },
+  'Balon mano':        { icon:'🤾', color:'blue',   section:'DEPORTES' },
+  'Escalada':          { icon:'🧗', color:'teal',   section:'DEPORTES' },
+  'Atletismo':         { icon:'🏃', color:'orange', section:'DEPORTES' },
+};
+const SECTION_ORDER = ['MÚSICA', 'ARTE', 'DEPORTES'];
+
+function getMeta(act) {
+  if (ACT[act]) return ACT[act];
+  const k = Object.keys(ACT).find(k => k.toLowerCase() === act.toLowerCase());
+  return k ? ACT[k] : { icon:'🏅', color:'blue', section:'DEPORTES' };
+}
+
+// ── Cargar datos desde Apps Script ───────────────────────────────────────────
+async function loadCSV() {
+  const ctrl = new AbortController();
+  const tid  = setTimeout(() => ctrl.abort(), 12000);
+  try {
+    const res = await fetch(API_URL, { signal: ctrl.signal, cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0) throw new Error('Sin datos');
+    return rows;
+  } finally {
+    clearTimeout(tid);
+  }
+}
+
+// ── Renderizar ────────────────────────────────────────────────────────────────
+function render(rows) {
+  const byAct = {};
+  rows.forEach(r => {
+    if (!byAct[r.actividad]) byAct[r.actividad] = [];
+    byAct[r.actividad].push(r.nombre);
+  });
+
+  const bySection = {};
+  SECTION_ORDER.forEach(s => bySection[s] = []);
+  Object.keys(byAct).forEach(act => {
+    const sec = getMeta(act).section;
+    if (!bySection[sec]) bySection[sec] = [];
+    bySection[sec].push(act);
+  });
+
+  let html = '';
+  SECTION_ORDER.forEach(sec => {
+    const acts = bySection[sec];
+    if (!acts || !acts.length) return;
+    html += `<div class="section">${sec}</div>`;
+    acts.forEach(act => {
+      const m = getMeta(act);
+      const names = byAct[act];
+      html += `
+        <div class="card">
+          <div class="card-top ${m.color}">${m.icon}</div>
+          <div class="card-body">
+            <div class="title">${act}<span class="badge">${names.length}</span></div>
+            <div class="names">${names.map(n => `<div class="name">${n}</div>`).join('')}</div>
+          </div>
+        </div>`;
+    });
+  });
+  document.getElementById('content').innerHTML = html;
+}
+
+// ── Inicio ────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const rows = await loadCSV();
+    render(rows);
+    const hora = new Date().toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
+    document.getElementById('statusText').textContent =
+      `${rows.length} participantes · Actualizado ${hora}`;
+  } catch(e) {
+    document.getElementById('statusText').textContent = 'Sin conexión';
+    document.getElementById('content').innerHTML = `
+      <div class="error-box">
+        <h3>⚠️ No se pudo cargar el Sheet</h3>
+        <p>Verifica que tienes conexión a internet y que el Apps Script está publicado con acceso <em>Cualquier persona</em>.</p>
+      </div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
