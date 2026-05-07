@@ -5,188 +5,659 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Actividades Deportivas & Arte</title>
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0 auto;
-  font-family: 'Segoe UI', sans-serif;
-  background: #0f172a;
-  color: white;
-  max-width: 480px;
+/* ══════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080c18;
+  --surface:#0f1629;
+  --card:#141d35;
+  --card2:#1a2440;
+  --border:rgba(255,255,255,0.07);
+  --text:#e8edf5;
+  --muted:#5a6a85;
+  --accent:#f59e0b;
+  --accent2:#ef4444;
+  --green:#10b981;
+  --blue:#3b82f6;
+  --purple:#8b5cf6;
+  --pink:#ec4899;
 }
-.header {
-  padding: 24px 20px 16px;
-  text-align: center;
-  background: linear-gradient(180deg, #1e293b, #0f172a);
-  position: sticky; top: 0; z-index: 50;
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Segoe UI',system-ui,sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
 }
-.header h2 { margin: 0 0 6px; font-size: 20px; font-weight: 700; }
-.header-meta {
-  display: flex; align-items: center; justify-content: center;
-  gap: 10px; font-size: 11px; color: #94a3b8;
-}
-.live-dot {
-  width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
-  animation: blink 1.4s ease-in-out infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
-.section {
-  padding: 18px 15px 6px; font-size: 11px; font-weight: 600;
-  opacity: 0.55; letter-spacing: 2px; text-transform: uppercase;
-}
-.card { margin: 10px 12px; border-radius: 18px; overflow: hidden; background: #1e293b; }
-.card-top { padding: 18px; font-size: 30px; text-align: center; }
-.purple { background: linear-gradient(90deg,#2e1065,#6d28d9); }
-.orange { background: linear-gradient(90deg,#7c2d12,#ea580c); }
-.red    { background: linear-gradient(90deg,#7f1d1d,#dc2626); }
-.blue   { background: linear-gradient(90deg,#1e3a8a,#3b82f6); }
-.green  { background: linear-gradient(90deg,#064e3b,#10b981); }
-.teal   { background: linear-gradient(90deg,#134e4a,#14b8a6); }
-.card-body { padding: 14px 15px; }
-.title { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
-.badge {
-  float: right; font-size: 12px;
-  background: rgba(255,255,255,0.15); padding: 4px 10px;
-  border-radius: 20px; font-weight: 400;
-}
-.names { display: flex; flex-wrap: wrap; gap: 6px; }
-.name { background: #334155; padding: 6px 11px; border-radius: 20px; font-size: 12px; }
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#2a3a5a;border-radius:3px}
 
-.spinner-wrap { text-align: center; padding: 60px 20px; color: #64748b; }
-.spinner {
-  width: 36px; height: 36px; border: 3px solid #1e293b;
-  border-top-color: #3b82f6; border-radius: 50%;
-  animation: spin 0.75s linear infinite; margin: 0 auto 14px;
+/* ══════════════════════════════════════════════
+   HERO HEADER
+══════════════════════════════════════════════ */
+.hero{
+  position:relative;
+  background:linear-gradient(135deg,#080c18 0%,#0d1b3e 50%,#080c18 100%);
+  padding:48px 20px 36px;
+  text-align:center;
+  overflow:hidden;
+  border-bottom:1px solid var(--border);
 }
-@keyframes spin { to{transform:rotate(360deg)} }
-.spinner-label { font-size: 12px; color: #475569; margin-top: 6px; }
+/* fondo animado */
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 50%,rgba(59,130,246,0.12) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 30%,rgba(139,92,246,0.10) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 50% at 50% 80%,rgba(245,158,11,0.08) 0%,transparent 70%);
+  animation:heroShift 8s ease-in-out infinite alternate;
+}
+@keyframes heroShift{
+  0%{opacity:0.6;transform:scale(1)}
+  100%{opacity:1;transform:scale(1.05)}
+}
+/* partículas flotantes */
+.particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle{
+  position:absolute;font-size:22px;opacity:0.12;
+  animation:floatUp linear infinite;
+}
+@keyframes floatUp{
+  0%{transform:translateY(100%) rotate(0deg);opacity:0}
+  10%{opacity:0.15}
+  90%{opacity:0.08}
+  100%{transform:translateY(-120px) rotate(360deg);opacity:0}
+}
 
-.error-box {
-  margin: 16px 12px; border-radius: 14px; padding: 18px 16px;
-  background: #1e293b; border: 1px solid #ef444440; font-size: 13px; line-height: 1.8;
+.hero-content{position:relative;z-index:2}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);
+  border-radius:20px;padding:5px 14px;font-size:12px;color:var(--green);
+  margin-bottom:16px;font-weight:500;
 }
-.error-box h3 { margin: 0 0 8px; font-size: 14px; color: #f87171; }
-.error-box p { color: #94a3b8; margin: 0; }
+.live-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--green);
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(0.6);opacity:0.4}}
+
+.hero h1{
+  font-size:clamp(26px,5vw,42px);font-weight:800;
+  background:linear-gradient(135deg,#fff 0%,#93c5fd 40%,var(--accent) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.15;margin-bottom:8px;letter-spacing:-0.5px;
+}
+.hero-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
+
+/* stats hero */
+.hero-stats{
+  display:flex;justify-content:center;gap:8px;flex-wrap:wrap;
+}
+.hstat{
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:16px;padding:12px 20px;min-width:90px;
+  backdrop-filter:blur(8px);
+  transition:transform .2s,border-color .2s;
+}
+.hstat:hover{transform:translateY(-3px);border-color:rgba(245,158,11,0.35)}
+.hstat-num{
+  font-size:26px;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;
+}
+.hstat-label{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ══════════════════════════════════════════════
+   CONTROLS BAR
+══════════════════════════════════════════════ */
+.controls-bar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,12,24,0.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+}
+.controls-inner{
+  max-width:900px;margin:0 auto;
+  display:flex;flex-direction:column;gap:10px;
+}
+.search-row{display:flex;gap:10px;align-items:center}
+.search-wrap{
+  position:relative;flex:1;
+}
+.search-wrap input{
+  width:100%;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:10px 14px 10px 40px;
+  color:var(--text);font-size:14px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-wrap input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(245,158,11,0.1);
+}
+.search-wrap input::placeholder{color:var(--muted)}
+.search-icon{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  font-size:15px;pointer-events:none;
+}
+.count-badge{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:8px 14px;font-size:13px;
+  color:var(--muted);white-space:nowrap;flex-shrink:0;
+}
+.count-badge span{color:var(--accent);font-weight:700}
+
+/* filtros sección */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.ftab{
+  padding:7px 16px;border-radius:20px;font-size:13px;font-weight:500;
+  border:1px solid var(--border);background:var(--card);color:var(--muted);
+  cursor:pointer;transition:all .2s;white-space:nowrap;
+  display:flex;align-items:center;gap:6px;
+}
+.ftab:hover{color:var(--text);border-color:rgba(255,255,255,0.2)}
+.ftab.active{
+  color:#000;font-weight:700;border-color:transparent;
+}
+.ftab.active.all   {background:linear-gradient(135deg,#f59e0b,#ef4444)}
+.ftab.active.mus   {background:linear-gradient(135deg,#8b5cf6,#6d28d9)}
+.ftab.active.art   {background:linear-gradient(135deg,#ef4444,#dc2626)}
+.ftab.active.dep   {background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+.ftab-n{
+  font-size:10px;background:rgba(0,0,0,0.2);
+  border-radius:8px;padding:1px 6px;
+}
+
+/* ══════════════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════════════ */
+main{max-width:900px;margin:0 auto;padding:24px 16px 48px}
+
+.section-header{
+  display:flex;align-items:center;gap:12px;
+  margin:32px 0 16px;
+}
+.section-label{
+  font-size:11px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--muted);
+}
+.section-line{flex:1;height:1px;background:var(--border)}
+.section-count{
+  font-size:11px;color:var(--muted);
+  background:var(--card);border:1px solid var(--border);
+  border-radius:8px;padding:2px 8px;
+}
+
+/* grid de tarjetas */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:14px;
+}
+
+/* ── tarjeta de actividad ── */
+.acard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  cursor:default;
+  animation:slideUp .4s ease both;
+}
+.acard:hover{
+  transform:translateY(-5px);
+  box-shadow:0 20px 48px rgba(0,0,0,0.5);
+}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* top con icono animado */
+.acard-top{
+  padding:22px 20px 16px;
+  display:flex;align-items:center;gap:14px;
+  position:relative;overflow:hidden;
+}
+.acard-top::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.06),transparent);
+  pointer-events:none;
+}
+.act-icon-wrap{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;flex-shrink:0;
+  background:rgba(0,0,0,0.25);
+  position:relative;z-index:1;
+}
+/* animaciones del icono */
+.acard:hover .act-icon-wrap{animation:iconBounce .5s ease}
+@keyframes iconBounce{
+  0%,100%{transform:scale(1) rotate(0deg)}
+  30%{transform:scale(1.3) rotate(-8deg)}
+  60%{transform:scale(0.9) rotate(5deg)}
+}
+.act-icon-float{animation:iconFloat 3s ease-in-out infinite}
+@keyframes iconFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+
+.acard-top-info{flex:1;position:relative;z-index:1}
+.act-name{font-size:17px;font-weight:700;line-height:1.2;color:#fff}
+.act-cat{font-size:11px;opacity:0.65;margin-top:3px}
+.act-badge{
+  position:absolute;top:14px;right:14px;z-index:1;
+  font-size:20px;font-weight:800;
+  background:rgba(0,0,0,0.3);border-radius:12px;
+  padding:4px 10px;line-height:1;
+  display:flex;flex-direction:column;align-items:center;
+}
+.act-badge small{font-size:8px;font-weight:400;opacity:0.7;text-transform:uppercase;letter-spacing:1px}
+
+/* gradientes por color */
+.acard-top.purple{background:linear-gradient(135deg,#1e0a4a,#4c1d95)}
+.acard-top.orange{background:linear-gradient(135deg,#431407,#9a3412)}
+.acard-top.red   {background:linear-gradient(135deg,#450a0a,#991b1b)}
+.acard-top.blue  {background:linear-gradient(135deg,#0c1a4a,#1e40af)}
+.acard-top.green {background:linear-gradient(135deg,#022c22,#065f46)}
+.acard-top.teal  {background:linear-gradient(135deg,#042f2e,#0f766e)}
+
+/* borde izquierdo por color */
+.acard.purple{border-left:3px solid #8b5cf6}
+.acard.orange{border-left:3px solid #f97316}
+.acard.red   {border-left:3px solid #ef4444}
+.acard.blue  {border-left:3px solid #3b82f6}
+.acard.green {border-left:3px solid #10b981}
+.acard.teal  {border-left:3px solid #14b8a6}
+
+/* glow al hover por color */
+.acard.purple:hover{border-color:#8b5cf6;box-shadow:0 20px 48px rgba(139,92,246,0.2)}
+.acard.orange:hover{border-color:#f97316;box-shadow:0 20px 48px rgba(249,115,22,0.2)}
+.acard.red:hover   {border-color:#ef4444;box-shadow:0 20px 48px rgba(239,68,68,0.2)}
+.acard.blue:hover  {border-color:#3b82f6;box-shadow:0 20px 48px rgba(59,130,246,0.2)}
+.acard.green:hover {border-color:#10b981;box-shadow:0 20px 48px rgba(16,185,129,0.2)}
+.acard.teal:hover  {border-color:#14b8a6;box-shadow:0 20px 48px rgba(20,184,166,0.2)}
+
+/* cuerpo de la tarjeta */
+.acard-body{padding:14px 16px 16px}
+
+/* barra de progreso */
+.progress-bar{
+  height:3px;background:var(--card2);border-radius:2px;margin-bottom:12px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;border-radius:2px;
+  transition:width 1s ease;
+}
+.purple .progress-fill{background:linear-gradient(90deg,#8b5cf6,#c4b5fd)}
+.orange .progress-fill{background:linear-gradient(90deg,#f97316,#fdba74)}
+.red    .progress-fill{background:linear-gradient(90deg,#ef4444,#fca5a5)}
+.blue   .progress-fill{background:linear-gradient(90deg,#3b82f6,#93c5fd)}
+.green  .progress-fill{background:linear-gradient(90deg,#10b981,#6ee7b7)}
+.teal   .progress-fill{background:linear-gradient(90deg,#14b8a6,#5eead4)}
+
+/* chips de nombres */
+.names-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.nchip{
+  background:var(--card2);border:1px solid var(--border);
+  padding:5px 10px;border-radius:20px;font-size:11.5px;
+  transition:background .15s,transform .15s;
+  cursor:default;
+}
+.nchip:hover{background:#253050;transform:scale(1.04)}
+
+/* ══════════════════════════════════════════════
+   EMPTY / LOADING / ERROR
+══════════════════════════════════════════════ */
+.state-wrap{text-align:center;padding:80px 20px;color:var(--muted)}
+.state-icon{font-size:52px;margin-bottom:16px;animation:iconFloat 2s ease-in-out infinite}
+.state-wrap p{font-size:14px;line-height:1.7}
+.spinner{
+  width:40px;height:40px;border:3px solid var(--card2);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .7s linear infinite;margin:0 auto 20px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+.footer{
+  text-align:center;padding:20px;
+  border-top:1px solid var(--border);
+  color:var(--muted);font-size:11px;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media(max-width:600px){
+  .hero{padding:32px 16px 24px}
+  .hstat{padding:10px 14px;min-width:70px}
+  .hstat-num{font-size:20px}
+  main{padding:16px 12px 40px}
+  .cards-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h2>⚡ Actividades Deportivas & Arte</h2>
-  <div class="header-meta">
-    <div class="live-dot"></div>
-    <span id="statusText">Cargando datos...</span>
+<!-- ══ HERO ══════════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <div class="live-dot"></div>
+      <span id="liveStatus">Conectando...</span>
+    </div>
+    <h1>Actividades<br>Deportivas & Arte</h1>
+    <p class="hero-sub" id="heroSub">Cargando datos del Sheet...</p>
+    <div class="hero-stats" id="heroStats">
+      <div class="hstat"><div class="hstat-num" id="stTotal">—</div><div class="hstat-label">Total</div></div>
+      <div class="hstat"><div class="hstat-num" id="stDep">—</div><div class="hstat-label">Deportes</div></div>
+      <div class="hstat"><div class="hstat-num" id="stMus">—</div><div class="hstat-label">Música</div></div>
+      <div class="hstat"><div class="hstat-num" id="stArt">—</div><div class="hstat-label">Arte</div></div>
+      <div class="hstat"><div class="hstat-num" id="stAct">—</div><div class="hstat-label">Actividades</div></div>
+    </div>
   </div>
 </div>
 
-<div id="content">
-  <div class="spinner-wrap">
+<!-- ══ CONTROLS ══════════════════════════════════════════════════════════ -->
+<div class="controls-bar">
+  <div class="controls-inner">
+    <div class="search-row">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Buscar participante o actividad..." oninput="applyFilters()">
+      </div>
+      <div class="count-badge">Mostrando <span id="showCount">0</span></div>
+    </div>
+    <div class="filter-row" id="filterRow">
+      <div class="ftab active all" data-sec="Todos" onclick="setSection('Todos',this)">🏆 Todos <span class="ftab-n" id="fn-all">0</span></div>
+      <div class="ftab dep"        data-sec="DEPORTES" onclick="setSection('DEPORTES',this)">⚽ Deportes <span class="ftab-n" id="fn-dep">0</span></div>
+      <div class="ftab mus"        data-sec="MÚSICA"   onclick="setSection('MÚSICA',this)">🎵 Música <span class="ftab-n" id="fn-mus">0</span></div>
+      <div class="ftab art"        data-sec="ARTE"     onclick="setSection('ARTE',this)">🎭 Arte <span class="ftab-n" id="fn-art">0</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════════════════ -->
+<main id="mainContent">
+  <div class="state-wrap">
     <div class="spinner"></div>
     <p>Conectando con Google Sheets...</p>
-    <div class="spinner-label" id="tryLabel"></div>
   </div>
-</div>
+</main>
+
+<div class="footer" id="footer"></div>
 
 <script>
-// ── URL del Apps Script (fuente de datos) ─────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbxeWcgk3oix6C2l52LT0mvtDToPDyb2nix_2FwTIDHG8w5tOr15zLAj8GDcsg0lHypw/exec';
 
-// ── Metadatos por actividad ───────────────────────────────────────────────────
-const ACT = {
-  'Piano':             { icon:'🎹', color:'purple', section:'MÚSICA' },
-  'violin':            { icon:'🎻', color:'purple', section:'MÚSICA' },
-  'Violin':            { icon:'🎻', color:'purple', section:'MÚSICA' },
-  'Chelo':             { icon:'🎻', color:'purple', section:'MÚSICA' },
-  'Bateria percusion': { icon:'🥁', color:'purple', section:'MÚSICA' },
-  'Guitarra':          { icon:'🎸', color:'purple', section:'MÚSICA' },
-  'Bajo':              { icon:'🎸', color:'purple', section:'MÚSICA' },
-  'Teatro':            { icon:'🎭', color:'red',    section:'ARTE'    },
-  'Voleibol':          { icon:'🏐', color:'blue',   section:'DEPORTES' },
-  'Basquetbol':        { icon:'🏀', color:'orange', section:'DEPORTES' },
-  'Gimnacia':          { icon:'🤸', color:'green',  section:'DEPORTES' },
-  'Futbol':            { icon:'⚽', color:'blue',   section:'DEPORTES' },
-  'Balon mano':        { icon:'🤾', color:'blue',   section:'DEPORTES' },
-  'Escalada':          { icon:'🧗', color:'teal',   section:'DEPORTES' },
-  'Atletismo':         { icon:'🏃', color:'orange', section:'DEPORTES' },
+const ACT_META = {
+  'Piano':             {icon:'🎹',color:'purple',section:'MÚSICA'},
+  'violin':            {icon:'🎻',color:'purple',section:'MÚSICA'},
+  'Violin':            {icon:'🎻',color:'purple',section:'MÚSICA'},
+  'Chelo':             {icon:'🎻',color:'purple',section:'MÚSICA'},
+  'Bateria percusion': {icon:'🥁',color:'purple',section:'MÚSICA'},
+  'Guitarra':          {icon:'🎸',color:'purple',section:'MÚSICA'},
+  'Bajo':              {icon:'🎸',color:'purple',section:'MÚSICA'},
+  'Teatro':            {icon:'🎭',color:'red',   section:'ARTE'},
+  'Voleibol':          {icon:'🏐',color:'blue',  section:'DEPORTES'},
+  'Basquetbol':        {icon:'🏀',color:'orange',section:'DEPORTES'},
+  'Gimnacia':          {icon:'🤸',color:'green', section:'DEPORTES'},
+  'Futbol':            {icon:'⚽',color:'blue',  section:'DEPORTES'},
+  'Balon mano':        {icon:'🤾',color:'blue',  section:'DEPORTES'},
+  'Escalada':          {icon:'🧗',color:'teal',  section:'DEPORTES'},
+  'Atletismo':         {icon:'🏃',color:'orange',section:'DEPORTES'},
 };
-const SECTION_ORDER = ['MÚSICA', 'ARTE', 'DEPORTES'];
+const SECTION_ORDER = ['DEPORTES','MÚSICA','ARTE'];
+const PARTICLES_ICONS = ['⚽','🏀','🏐','🎾','🤸','🏃','🎭','🎸','🎹','🥁','🤾','🧗','🏋️','🎻'];
 
-function getMeta(act) {
-  if (ACT[act]) return ACT[act];
-  const k = Object.keys(ACT).find(k => k.toLowerCase() === act.toLowerCase());
-  return k ? ACT[k] : { icon:'🏅', color:'blue', section:'DEPORTES' };
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let allRows = [];
+let activeSection = 'Todos';
+let maxPerSection = {};
+
+// ═══════════════════════════════════════════════════════
+// PARTÍCULAS HERO
+// ═══════════════════════════════════════════════════════
+function createParticles(){
+  const wrap = document.getElementById('particles');
+  for(let i=0;i<18;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = PARTICLES_ICONS[i % PARTICLES_ICONS.length];
+    p.style.left = (Math.random()*100)+'%';
+    p.style.fontSize = (16+Math.random()*18)+'px';
+    p.style.animationDuration = (8+Math.random()*12)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    wrap.appendChild(p);
+  }
 }
 
-// ── Cargar datos desde Apps Script ───────────────────────────────────────────
-async function loadCSV() {
+// ═══════════════════════════════════════════════════════
+// META HELPER
+// ═══════════════════════════════════════════════════════
+function getMeta(act){
+  if(ACT_META[act]) return ACT_META[act];
+  const k = Object.keys(ACT_META).find(k=>k.toLowerCase()===act.toLowerCase());
+  return k ? ACT_META[k] : {icon:'🏅',color:'blue',section:'DEPORTES'};
+}
+
+// ═══════════════════════════════════════════════════════
+// CONTADOR ANIMADO
+// ═══════════════════════════════════════════════════════
+function animateCount(el, target, duration=800){
+  const start = Date.now();
+  const from = parseInt(el.textContent)||0;
+  function tick(){
+    const p = Math.min((Date.now()-start)/duration,1);
+    const ease = 1-Math.pow(1-p,3);
+    el.textContent = Math.round(from+(target-from)*ease);
+    if(p<1) requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+// ═══════════════════════════════════════════════════════
+// FETCH APPS SCRIPT
+// ═══════════════════════════════════════════════════════
+async function loadData(){
   const ctrl = new AbortController();
-  const tid  = setTimeout(() => ctrl.abort(), 12000);
-  try {
-    const res = await fetch(API_URL, { signal: ctrl.signal, cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+  const tid  = setTimeout(()=>ctrl.abort(),15000);
+  try{
+    const res = await fetch(API_URL,{signal:ctrl.signal,cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
     const rows = await res.json();
-    if (!Array.isArray(rows) || rows.length === 0) throw new Error('Sin datos');
+    if(!Array.isArray(rows)||!rows.length) throw new Error('Sin datos');
+    clearTimeout(tid);
     return rows;
-  } finally {
+  }finally{
     clearTimeout(tid);
   }
 }
 
-// ── Renderizar ────────────────────────────────────────────────────────────────
-function render(rows) {
-  const byAct = {};
-  rows.forEach(r => {
-    if (!byAct[r.actividad]) byAct[r.actividad] = [];
+// ═══════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════
+function updateStats(rows){
+  const dep = rows.filter(r=>getMeta(r.actividad).section==='DEPORTES').length;
+  const mus = rows.filter(r=>getMeta(r.actividad).section==='MÚSICA').length;
+  const art = rows.filter(r=>getMeta(r.actividad).section==='ARTE').length;
+  const acts= [...new Set(rows.map(r=>r.actividad))].length;
+
+  animateCount(document.getElementById('stTotal'), rows.length);
+  animateCount(document.getElementById('stDep'),   dep);
+  animateCount(document.getElementById('stMus'),   mus);
+  animateCount(document.getElementById('stArt'),   art);
+  animateCount(document.getElementById('stAct'),   acts);
+
+  document.getElementById('fn-all').textContent = rows.length;
+  document.getElementById('fn-dep').textContent = dep;
+  document.getElementById('fn-mus').textContent = mus;
+  document.getElementById('fn-art').textContent = art;
+
+  // max por sección para la barra de progreso
+  const byAct={};
+  rows.forEach(r=>{
+    if(!byAct[r.actividad]) byAct[r.actividad]=0;
+    byAct[r.actividad]++;
+  });
+  const counts = Object.values(byAct);
+  maxPerSection.global = Math.max(...counts,1);
+}
+
+// ═══════════════════════════════════════════════════════
+// FILTROS
+// ═══════════════════════════════════════════════════════
+function setSection(sec, el){
+  activeSection = sec;
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters(){
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let rows = allRows;
+
+  if(activeSection !== 'Todos'){
+    rows = rows.filter(r=>getMeta(r.actividad).section===activeSection);
+  }
+  if(q){
+    rows = rows.filter(r=>
+      r.nombre.toLowerCase().includes(q)||
+      r.actividad.toLowerCase().includes(q)||
+      r.categoria.toLowerCase().includes(q)
+    );
+  }
+
+  document.getElementById('showCount').textContent = rows.length;
+  renderCards(rows);
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════
+function renderCards(rows){
+  if(!rows.length){
+    document.getElementById('mainContent').innerHTML=`
+      <div class="state-wrap">
+        <div class="state-icon">🔍</div>
+        <p>No se encontraron participantes<br>con ese criterio de búsqueda.</p>
+      </div>`;
+    return;
+  }
+
+  // agrupar
+  const byAct={};
+  rows.forEach(r=>{
+    if(!byAct[r.actividad]) byAct[r.actividad]=[];
     byAct[r.actividad].push(r.nombre);
   });
 
-  const bySection = {};
-  SECTION_ORDER.forEach(s => bySection[s] = []);
-  Object.keys(byAct).forEach(act => {
+  const bySection={};
+  SECTION_ORDER.forEach(s=>bySection[s]=[]);
+  Object.keys(byAct).forEach(act=>{
     const sec = getMeta(act).section;
-    if (!bySection[sec]) bySection[sec] = [];
+    if(!bySection[sec]) bySection[sec]=[];
     bySection[sec].push(act);
   });
 
-  let html = '';
-  SECTION_ORDER.forEach(sec => {
-    const acts = bySection[sec];
-    if (!acts || !acts.length) return;
-    html += `<div class="section">${sec}</div>`;
-    acts.forEach(act => {
+  let html='';
+  const secOrder = activeSection==='Todos' ? SECTION_ORDER : [activeSection];
+
+  secOrder.forEach(sec=>{
+    const acts=(bySection[sec]||[]);
+    if(!acts.length) return;
+
+    const secLabel = sec==='DEPORTES'?'⚽ Deportes': sec==='MÚSICA'?'🎵 Música':'🎭 Arte';
+    const totalSec = acts.reduce((a,act)=>a+byAct[act].length,0);
+
+    html+=`<div class="section-header">
+      <div class="section-label">${secLabel}</div>
+      <div class="section-line"></div>
+      <div class="section-count">${totalSec} participantes</div>
+    </div>
+    <div class="cards-grid">`;
+
+    acts.forEach((act,i)=>{
       const m = getMeta(act);
       const names = byAct[act];
-      html += `
-        <div class="card">
-          <div class="card-top ${m.color}">${m.icon}</div>
-          <div class="card-body">
-            <div class="title">${act}<span class="badge">${names.length}</span></div>
-            <div class="names">${names.map(n => `<div class="name">${n}</div>`).join('')}</div>
+      const pct = Math.round((names.length/maxPerSection.global)*100);
+      const delay = i*0.07;
+
+      html+=`
+        <div class="acard ${m.color}" style="animation-delay:${delay}s">
+          <div class="acard-top ${m.color}">
+            <div class="act-icon-wrap">
+              <span class="act-icon-float">${m.icon}</span>
+            </div>
+            <div class="acard-top-info">
+              <div class="act-name">${act}</div>
+              <div class="act-cat">${m.section}</div>
+            </div>
+            <div class="act-badge">${names.length}<small>alumnos</small></div>
+          </div>
+          <div class="acard-body">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:${pct}%"></div>
+            </div>
+            <div class="names-wrap">
+              ${names.map(n=>`<div class="nchip">${n}</div>`).join('')}
+            </div>
           </div>
         </div>`;
     });
+
+    html+=`</div>`;
   });
-  document.getElementById('content').innerHTML = html;
+
+  document.getElementById('mainContent').innerHTML = html;
 }
 
-// ── Inicio ────────────────────────────────────────────────────────────────────
-async function init() {
-  try {
-    const rows = await loadCSV();
-    render(rows);
-    const hora = new Date().toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
-    document.getElementById('statusText').textContent =
-      `${rows.length} participantes · Actualizado ${hora}`;
-  } catch(e) {
-    document.getElementById('statusText').textContent = 'Sin conexión';
-    document.getElementById('content').innerHTML = `
-      <div class="error-box">
-        <h3>⚠️ No se pudo cargar el Sheet</h3>
-        <p>Verifica que tienes conexión a internet y que el Apps Script está publicado con acceso <em>Cualquier persona</em>.</p>
+// ═══════════════════════════════════════════════════════
+// INICIO
+// ═══════════════════════════════════════════════════════
+createParticles();
+
+(async()=>{
+  try{
+    const rows = await loadData();
+    allRows = rows;
+
+    updateStats(rows);
+    document.getElementById('showCount').textContent = rows.length;
+
+    const hora = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('liveStatus').textContent = `En vivo · ${hora}`;
+    document.getElementById('heroSub').textContent = `${rows.length} participantes en ${[...new Set(rows.map(r=>r.actividad))].length} actividades`;
+    document.getElementById('footer').textContent = `⚡ Datos actualizados a las ${hora} · Fuente: Google Sheets`;
+
+    applyFilters();
+  }catch(e){
+    document.getElementById('liveStatus').textContent = 'Sin conexión';
+    document.getElementById('mainContent').innerHTML=`
+      <div class="state-wrap">
+        <div class="state-icon">⚠️</div>
+        <p>No se pudo cargar el Sheet.<br>
+        <small style="color:#475569">Verifica tu conexión a internet<br>y que el Apps Script esté activo.</small></p>
       </div>`;
   }
-}
-
-init();
+})();
 </script>
 </body>
 </html>
